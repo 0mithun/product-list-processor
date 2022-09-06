@@ -31,7 +31,7 @@ try {
 
     // Get file extension from file name
     $input_file_extension = strtolower(pathinfo($input_filename, PATHINFO_EXTENSION));
-    $output_file_extension = (pathinfo($output_filename, PATHINFO_EXTENSION));
+    $output_file_extension = strtolower(pathinfo($output_filename, PATHINFO_EXTENSION));
 
     $supported_input_file_extensions = ['csv', 'tsv'];
     $supported_output_file_extensions = ['csv', 'tsv'];
