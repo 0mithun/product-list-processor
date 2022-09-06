@@ -1,20 +1,23 @@
 <?php
 
-
-$args = getopt('', ['file:', 'unique-combinations:']);
+//Set time & memory limit for php script
+set_time_limit(0);
+ini_set('memory_limit', -1);
 
 
 try {
+    //Get arguments from CLI
+    $args = getopt('', ['input:', 'output:']);
+
     //Check all requrie arguments presents
-    if(!array_key_exists('file', $args)){
-        throw new Exception('File name is required.');
-    }else if(!array_key_exists('unique-combinations', $args)){
-        throw new Exception('unique-combinations file name is required.');
+    if(!array_key_exists('input', $args)){
+        throw new Exception('Input file name is required.');
+    }else if(!array_key_exists('output', $args)){
+        throw new Exception('Output file name is required.');
     }
 
-    $input_filename = $args['file'];
-    $output_filename = $args['unique-combinations'];
-
+    $input_filename = $args['input'];
+    $output_filename = $args['output'];
 
     // Check the input file exists
     if(!file_exists($input_filename)){
@@ -26,15 +29,23 @@ try {
         throw new Exception("The file $input_filename can't readble");
     }
 
-    // Check the output file writable
-    if(!is_writable($output_filename)){
-        throw new Exception("The file $output_filename can't writable");
-    }
-
-
     // Get file extension from file name
     $input_file_extension = pathinfo($input_filename, PATHINFO_EXTENSION);
     $output_file_extension = pathinfo($output_filename, PATHINFO_EXTENSION);
+
+    $supported_input_file_extensions = ['csv'];
+    $supported_output_file_extensions = ['csv'];
+
+
+    //Check supported input file extension
+    if(!in_array($input_file_extension, $supported_input_file_extensions)){
+        throw new Exception("The $input_file_extension format input file not support.");
+    }
+
+    //Check supported output file extension
+    if(!in_array($output_file_extension, $supported_output_file_extensions)){
+        throw new Exception("The $output_file_extension format output file not support.");
+    }
 
     $data = [];
     if($input_file_extension == 'csv') {
@@ -63,7 +74,7 @@ function processCSVFile(string $input_filename): array {
     while(($row = fgetcsv($file)) != false){
         $key = preg_replace('/\s/', '_', join('_',$row));
         if(array_key_exists($key, $data)){
-            $data[$key]['count'] =  $data[$key]['count'] +1;
+            $data[$key]['count'] +=  1;
         }else {
             $data[$key] = $row;
             $data[$key]['count'] = 1;
@@ -87,7 +98,9 @@ function processCSVFile(string $input_filename): array {
 function writeCSVFile(array $data, string $fileName) {
     $file = fopen($fileName, 'w');
     foreach($data as $key => $value){
-        fputcsv($file, $value);
+        if(fputcsv($file, $value) == FALSE){
+            throw new Exception("The file $fileName can't readble");
+        }
     }
     fclose($file);
 
