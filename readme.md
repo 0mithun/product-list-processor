@@ -31,6 +31,7 @@
 - If your output file write failed you will see an error message.
 - If your output file write successfully you will see a success message.
 - New input and/or output file format can be implemented easily if you needed. like (json, xml etc)
+- Example input and output files cab be found in the examples directory
 
 
 
