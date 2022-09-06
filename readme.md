@@ -29,6 +29,7 @@
 - If your input file not readable you will see an error message.
 - If your input or output file not supported you will see an error message.
 - If your output file write failed you will see an error message.
+- Unique combination is case sensitive ie. (Red & red) the two word same but 1 first character Uppercase and another lowercase. It will count uniquely.
 - If your output file write successfully you will see a success message.
 - New input and/or output file format can be implemented easily if you needed. like (json, xml etc)
 - Example input and output files cab be found in the examples directory
