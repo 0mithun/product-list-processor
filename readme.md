@@ -6,7 +6,12 @@
 - Your PHP version must be >= 7+ 
 
 
+## Installation Instructions
+- Download or clone the project to your system
+
+
 ## Run Application
+- copy your csv file to your script directory
 - Open terminal/command prompt in your script directory or browse script directory by command line
 - Run `parser.php --input=yourInputFileName --output=yourOutputFileName`
 - You will see your outfile file on script directory
