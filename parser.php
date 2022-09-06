@@ -30,11 +30,11 @@ try {
     }
 
     // Get file extension from file name
-    $input_file_extension = pathinfo($input_filename, PATHINFO_EXTENSION);
-    $output_file_extension = pathinfo($output_filename, PATHINFO_EXTENSION);
+    $input_file_extension = strtolower(pathinfo($input_filename, PATHINFO_EXTENSION));
+    $output_file_extension = (pathinfo($output_filename, PATHINFO_EXTENSION));
 
-    $supported_input_file_extensions = ['csv'];
-    $supported_output_file_extensions = ['csv'];
+    $supported_input_file_extensions = ['csv', 'tsv'];
+    $supported_output_file_extensions = ['csv', 'tsv'];
 
 
     //Check supported input file extension
@@ -48,11 +48,11 @@ try {
     }
 
     $data = [];
-    if($input_file_extension == 'csv') {
+    if($input_file_extension == 'csv' || $input_file_extension == 'tsv') {
         $data = processCSVFile($input_filename);
     }
 
-    if($output_file_extension == 'csv') {
+    if($output_file_extension == 'csv' || $output_file_extension == 'tsv') {
         writeCSVFile($data, $output_filename);
     }
 
@@ -67,11 +67,14 @@ try {
  * @return array
  */
 function processCSVFile(string $input_filename): array {
+    $seperator =  strtolower(pathinfo($input_filename, PATHINFO_EXTENSION)) == 'csv' ? "," :"\t";
+
+
     $file = fopen($input_filename,"r");
-    $header =  fgetcsv($file);
+    $header =  fgetcsv($file, 0, $seperator);
     $data = [];
     $data[] = [...$header, 'count'];
-    while(($row = fgetcsv($file)) != false){
+    while(($row = fgetcsv($file, 0, $seperator)) != false){
         $key = preg_replace('/\s/', '_', join('_',$row));
         if(array_key_exists($key, $data)){
             $data[$key]['count'] +=  1;
@@ -96,9 +99,10 @@ function processCSVFile(string $input_filename): array {
  * @return void
  */
 function writeCSVFile(array $data, string $fileName) {
+    $seperator =  strtolower(pathinfo($fileName, PATHINFO_EXTENSION)) == 'csv' ? "," :"\t";
     $file = fopen($fileName, 'w');
     foreach($data as $key => $value){
-        if(fputcsv($file, $value) == FALSE){
+        if(fputcsv($file, $value, $seperator) == FALSE){
             throw new Exception("The file $fileName can't readble");
         }
     }
